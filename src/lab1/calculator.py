@@ -35,4 +35,4 @@ def calc(num1,num2, symvol):
         return "Ошибка чтения выражения"
     return res
 
-main()
+# main()
