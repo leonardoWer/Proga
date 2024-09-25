@@ -1,3 +1,8 @@
+"""
+Vigenere cipher functions
+"""
+alpha = [chr(i) for i in range (ord("A"),ord("Z")+1)] + [chr(i) for i in range (ord("A"),ord("Z")+1)] + [chr(i) for i in range (ord("a"), ord("z")+1)] + [chr(i) for i in range (ord("a"), ord("z")+1)]
+
 def encrypt_vigenere(plaintext: str, keyword: str) -> str:
     """
     Encrypts plaintext using a Vigenere cipher.
@@ -9,9 +14,15 @@ def encrypt_vigenere(plaintext: str, keyword: str) -> str:
     'LXFOPVEFRNHR'
     """
     ciphertext = ""
-    # PUT YOUR CODE HERE
-    return ciphertext
+    if len(keyword)<len(plaintext):
+        keyword *= len(plaintext)
 
+    for i in range(len(plaintext)):
+        if plaintext[i].isalpha():
+            ciphertext += alpha[ alpha.index(plaintext[i]) + (alpha.index(keyword[i]))%52 ]
+        else:
+            ciphertext += plaintext[i]
+    return ciphertext
 
 def decrypt_vigenere(ciphertext: str, keyword: str) -> str:
     """
@@ -24,5 +35,12 @@ def decrypt_vigenere(ciphertext: str, keyword: str) -> str:
     'ATTACKATDAWN'
     """
     plaintext = ""
-    # PUT YOUR CODE HERE
+    if len(keyword) < len(ciphertext):
+        keyword *= len(ciphertext)
+
+    for i in range(len(ciphertext)):
+        if ciphertext[i].isalpha():
+            plaintext += alpha[ alpha.index(ciphertext[i]) - (alpha.index(keyword[i])) % 52 +26]
+        else:
+            plaintext += ciphertext[i]
     return plaintext
