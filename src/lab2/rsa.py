@@ -39,9 +39,23 @@ def multiplicative_inverse(e: int, phi: int) -> int:
     >>> multiplicative_inverse(7, 40)
     23
     """
-    for d in range(1, phi+1):
-        if d*e % phi == 1:
-            return d
+    a,b = phi, e
+    a_div_b_list = []
+    while a%b!=0:
+        a_mod_b = a%b
+        a_div_b = a//b
+        a,b = b, a_mod_b
+        a_div_b_list.append(a_div_b)
+    x_last,y_last = 0,1
+    x_y_list = []
+    for i in range(len(a_div_b_list)-1, -1, -1):
+        x = y_last
+        y = x_last - y_last * a_div_b_list[i]
+        x_y_list.append([x, y])
+        x_last = x
+        y_last = y
+    d = y_last%phi
+    return d
 
 
 def generate_keypair(p: int, q: int) -> tp.Tuple[tp.Tuple[int, int], tp.Tuple[int, int]]:
