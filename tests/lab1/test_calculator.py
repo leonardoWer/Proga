@@ -9,4 +9,8 @@ class CalculatorTestCase(unittest.TestCase):
 
     def test_lab1(self):
         self.assertEqual(calc(10,20,"+"), 30)
+        self.assertEqual(calc(20, 10, "-"), 10)
+        self.assertEqual(calc(30, 10, "/"), 3)
+        self.assertEqual(calc(50, 0, "/"), "На ноль делить нельзя!")
+
 
