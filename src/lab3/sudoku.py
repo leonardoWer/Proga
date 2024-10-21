@@ -146,11 +146,14 @@ def find_empty_positions(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.Tuple[in
     (1, 1)
     >>> find_empty_positions([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']])
     (2, 0)
+    >>> find_empty_positions([['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9']])
+    False
     """
     for row in grid:
         for el in row:
             if el == ".":
                 return grid.index(row),row.index(el)
+    return False
 
 
 
@@ -171,29 +174,55 @@ def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -
     return set(values)
 
 
-def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
-    """ Решение пазла, заданного в grid """
-    """ Как решать Судоку?
-        1. Найти свободную позицию
-        2. Найти все возможные значения, которые могут находиться на этой позиции
-        3. Для каждого возможного значения:
-            3.1. Поместить это значение на эту позицию
-            3.2. Продолжить решать оставшуюся часть пазла
-    >>> grid = read_sudoku('puzzle1.txt')
-    >>> solve(grid)
-    [['5', '3', '4', '6', '7', '8', '9', '1', '2'], ['6', '7', '2', '1', '9', '5', '3', '4', '8'], ['1', '9', '8', '3', '4', '2', '5', '6', '7'], ['8', '5', '9', '7', '6', '1', '4', '2', '3'], ['4', '2', '6', '8', '5', '3', '7', '9', '1'], ['7', '1', '3', '9', '2', '4', '8', '5', '6'], ['9', '6', '1', '5', '3', '7', '2', '8', '4'], ['2', '8', '7', '4', '1', '9', '6', '3', '5'], ['3', '4', '5', '2', '8', '6', '1', '7', '9']]
-    """
-    while find_empty_positions(grid) is not None:
-        empty_position = find_empty_positions(grid)
-        mb_values = find_possible_values(grid, empty_position)
-        if len(mb_values) != 0:
-            for el in mb_values:
-                grid[empty_position[0]][empty_position[-1]] = el
-                solve(grid)
-        else:
-            break
+def check_position_is_safe(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int], el) -> bool:
+    """Возвращает 1 если на заданное место можно поставить заданный элемент, 0 если нет"""
+    return el not in get_row(grid, pos) and el not in get_col(grid, pos) and el not in get_block(grid, pos)
 
+
+def grid_solution(grid: tp.List[tp.List[str]]) -> tp.List[tp.List[str]]:
+    """
+    Возвращает результат решения пазла
+     >>> grid = read_sudoku('puzzle1.txt')
+     >>> grid_solution(grid)
+     [['5', '3', '4', '6', '7', '8', '9', '1', '2'], ['6', '7', '2', '1', '9', '5', '3', '4', '8'], ['1', '9', '8', '3', '4', '2', '5', '6', '7'], ['8', '5', '9', '7', '6', '1', '4', '2', '3'], ['4', '2', '6', '8', '5', '3', '7', '9', '1'], ['7', '1', '3', '9', '2', '4', '8', '5', '6'], ['9', '6', '1', '5', '3', '7', '2', '8', '4'], ['2', '8', '7', '4', '1', '9', '6', '3', '5'], ['3', '4', '5', '2', '8', '6', '1', '7', '9']]
+    """
+    solve(grid)
     return grid
+
+
+def solve(grid: tp.List[tp.List[str]]):
+    """
+    Решение пазла, заданного в grid
+    - Возвращает 1, когда пазл решён, и 0, если нет
+     >>> grid = read_sudoku('puzzle1.txt')
+     >>> solve(grid)
+     True
+    """
+    # Если нет пустых клеток, возвращаем 1, то есть флаг, что пазл решён
+    if not find_empty_positions(grid):
+        return True
+    # Находим пустую клетку
+    empty_position = find_empty_positions(grid)
+    # Находим возможные значения
+    mb_values = find_possible_values(grid, empty_position)
+    # Если таких нет, возвращаем ноль
+    if len(mb_values) == 0:
+        return False
+    else:
+        for el in mb_values:
+            """
+            Если после подстановки цифры на заданное место она не будет повторяться ни в строке, ни в столбце, ни в блоке
+            То ставим цифру на это место
+            """
+            if check_position_is_safe(grid, empty_position, el):
+                grid[empty_position[0]][empty_position[1]] = el
+                # Если теперь пазл решён, возвращаем 1
+                if solve(grid):
+                    return True
+                # Если нет, заменяем значение обратно на точку
+                grid[empty_position[0]][empty_position[1]] = "."
+        # Если ни один элемент не подошёл, возвращаем 0
+        return False
 
 
 def check_solution(solution: tp.List[tp.List[str]]) -> bool:
@@ -242,9 +271,10 @@ if __name__ == "__main__":
         grid = read_sudoku(fname)
         print(f"Original sudoku {fname}")
         display(grid)
-        solution = solve(grid)
+        solution = grid_solution(grid)
         if check_solution(solution):
-            if not solution:
+            print("Puzzle successful solved")
+            if not solve(grid):
                 print(f"Puzzle {fname} can't be solved, mb it incorrect")
             else:
                 print(f"Solve sudoku {fname}")
