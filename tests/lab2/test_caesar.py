@@ -3,8 +3,9 @@ import random
 import string
 from src.lab2.caesar import encrypt_caesar, decrypt_caesar
 
-# class CalculatorTestCase(unittest.TestCase):
+class CaesarTestCase(unittest.TestCase):
 
-    # Тест для проверки работы, можно удалить
-    # def test_one(self):
-    #     self.assertEqual(1, 1)
+    def test_caesar(self):
+        self.assertEqual(encrypt_caesar("PPPppp"), "SSSsss")
+        self.assertEqual(decrypt_caesar("SSSsss"), "PPPppp")
+        self.assertEqual(encrypt_caesar("12345"), "12345")

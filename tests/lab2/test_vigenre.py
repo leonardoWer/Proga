@@ -3,11 +3,8 @@ import unittest
 import random
 from src.lab2.vigenre import encrypt_vigenere, decrypt_vigenere
 
-class CalculatorTestCase(unittest.TestCase):
+class VigenereTestCase(unittest.TestCase):
 
-    # Тест для проверки работы, можно удалить
-    # def test_one(self):
-    #     self.assertEqual(1, 1)
 
     def test_randomized(self):
         kwlen = random.randint(4, 24)
