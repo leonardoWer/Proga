@@ -43,7 +43,7 @@ def group(values: tp.List[T], n: int) -> tp.List[tp.List[T]]:
     """
     matrix = []
     for i in range(0, len(values), n):
-        matrix.append(values[i:i+n])
+        matrix.append(values[i:i + n])
 
     return matrix
 
@@ -57,7 +57,7 @@ def get_row(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str
     >>> get_row([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']], (2, 0))
     ['.', '8', '9']
     """
-    pass
+    return grid[pos[0]]
 
 
 def get_col(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
@@ -69,7 +69,10 @@ def get_col(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str
     >>> get_col([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']], (0, 2))
     ['3', '6', '9']
     """
-    pass
+    res = []
+    for row in grid:
+        res.append(str(row[pos[-1]]))
+    return res
 
 
 def get_block(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
@@ -82,7 +85,54 @@ def get_block(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[s
     >>> get_block(grid, (8, 8))
     ['2', '8', '.', '.', '.', '5', '.', '7', '9']
     """
-    pass
+    res = []
+    """
+    Размеры квадратов по индексам
+    0-2
+    3-5
+    6-8
+    """
+    # Если в первой строке квадратов
+    if str(pos[0]) in "012":
+        for row in range(3):
+            # Если в первом квадрате
+            if str(pos[-1]) in "012":
+                res.extend(grid[row][0:3])
+            # Если во втором квадрате
+            if str(pos[-1]) in "345":
+                res.extend(grid[row][3:6])
+            # Если в третьем квадрате
+            if str(pos[-1]) in "678":
+                res.extend(grid[row][6:9])
+
+    # Если во второй строке квадратов
+    if str(pos[0]) in "345":
+        for row in range(3, 6):
+            # Если в первом квадрате
+            if str(pos[-1]) in "012":
+                res.extend(grid[row][0:3])
+            # Если во втором квадрате
+            if str(pos[-1]) in "345":
+                res.extend(grid[row][3:6])
+            # Если в третьем квадрате
+            if str(pos[-1]) in "678":
+                res.extend(grid[row][6:9])
+
+
+    # Если в третьей строке квадратов
+    if str(pos[0]) in "678":
+        for row in range(6,9):
+            # Если в первом квадрате
+            if str(pos[-1]) in "012":
+                res.extend(grid[row][0:3])
+            # Если во втором квадрате
+            if str(pos[-1]) in "345":
+                res.extend(grid[row][3:6])
+            # Если в третьем квадрате
+            if str(pos[-1]) in "678":
+                res.extend(grid[row][6:9])
+
+    return res
 
 
 def find_empty_positions(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.Tuple[int, int]]:
