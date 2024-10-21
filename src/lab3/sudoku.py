@@ -1,8 +1,6 @@
 import pathlib
 import typing as tp
-
-from numpy.ma.core import empty_like, empty
-from tomlkit import value
+import random
 
 T = tp.TypeVar("T")
 
@@ -121,10 +119,9 @@ def get_block(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[s
             if str(pos[-1]) in "678":
                 res.extend(grid[row][6:9])
 
-
     # Если в третьей строке квадратов
     if str(pos[0]) in "678":
-        for row in range(6,9):
+        for row in range(6, 9):
             # Если в первом квадрате
             if str(pos[-1]) in "012":
                 res.extend(grid[row][0:3])
@@ -152,9 +149,8 @@ def find_empty_positions(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.Tuple[in
     for row in grid:
         for el in row:
             if el == ".":
-                return grid.index(row),row.index(el)
+                return grid.index(row), row.index(el)
     return False
-
 
 
 def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.Set[str]:
@@ -176,7 +172,7 @@ def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -
 
 def check_position_is_safe(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int], el) -> bool:
     """Возвращает 1 если на заданное место можно поставить заданный элемент, 0 если нет"""
-    return el not in get_row(grid, pos) and el not in get_col(grid, pos) and el not in get_block(grid, pos)
+    return (el not in get_row(grid, pos)) and (el not in get_col(grid, pos)) and (el not in get_block(grid, pos))
 
 
 def grid_solution(grid: tp.List[tp.List[str]]) -> tp.List[tp.List[str]]:
@@ -242,28 +238,61 @@ def check_solution(solution: tp.List[tp.List[str]]) -> bool:
     return True
 
 
-def generate_sudoku(N: int) -> tp.List[tp.List[str]]:
+def generate_random_grid(grid: tp.List[tp.List[str]]):
+    if not find_empty_positions(grid):
+        return True
+    # Находим пустую клетку
+    empty_position = find_empty_positions(grid)
+    row, col = empty_position[0], empty_position[1]
+    for cnt in range(9):
+        random_number = str(random.randint(1, 9))
+        if check_position_is_safe(grid, empty_position, random_number):
+            grid[row][col] = random_number
+            if generate_random_grid(grid):
+                return True
+
+            grid[row][col] = "."
+
+    return False
+
+
+def delete_cells(grid:tp.List[tp.List[str]], cnt_del_el: int):
+    while cnt_del_el:
+        row = random.randint(0,8)
+        col = random.randint(0, 8)
+        if grid[row][col] != ".":
+            grid[row][col] = "."
+            cnt_del_el -=1
+
+
+def generate_sudoku(cnt_el: int) -> tp.List[tp.List[str]]:
     """Генерация судоку заполненного на N элементов
     >>> grid = generate_sudoku(40)
     >>> sum(1 for row in grid for e in row if e == '.')
     41
-    >>> solution = solve(grid)
+    >>> solution = grid_solution(grid)
     >>> check_solution(solution)
     True
     >>> grid = generate_sudoku(1000)
     >>> sum(1 for row in grid for e in row if e == '.')
     0
-    >>> solution = solve(grid)
+    >>> solution = grid_solution(grid)
     >>> check_solution(solution)
     True
     >>> grid = generate_sudoku(0)
     >>> sum(1 for row in grid for e in row if e == '.')
     81
-    >>> solution = solve(grid)
+    >>> solution = grid_solution(grid)
     >>> check_solution(solution)
     True
     """
-    pass
+    if cnt_el>81:
+        cnt_el = 81
+    cnt_del_el = 81-cnt_el
+    grid = read_sudoku("empty_puzzle.txt")
+    generate_random_grid(grid)
+    delete_cells(grid, cnt_del_el)
+    return grid
 
 
 if __name__ == "__main__":
