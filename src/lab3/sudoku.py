@@ -170,8 +170,13 @@ def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -
     return set(values)
 
 
-def check_position_is_safe(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int], el) -> bool:
-    """Возвращает 1 если на заданное место можно поставить заданный элемент, 0 если нет"""
+def check_position_is_safe(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int], el:str) -> bool:
+    """
+    Возвращает 1 если на заданное место можно поставить заданный элемент, 0 если нет
+     >>> grid = read_sudoku('puzzle1.txt')
+     >>> check_position_is_safe(grid, (0,2), "4")
+     True
+    """
     return (el not in get_row(grid, pos)) and (el not in get_col(grid, pos)) and (el not in get_block(grid, pos))
 
 
@@ -233,7 +238,8 @@ def check_solution(solution: tp.List[tp.List[str]]) -> bool:
     for row in range(9):
         for col in range(9):
             pos = (row, col)
-            if len(set(get_row(solution, pos))) != 9 or len(set(get_col(solution, pos))) != 9 or len(set(get_block(solution, pos))) != 9:
+            if len(set(get_row(solution, pos))) != 9 or len(set(get_col(solution, pos))) != 9 or len(
+                    set(get_block(solution, pos))) != 9:
                 return False
     return True
 
@@ -256,13 +262,13 @@ def generate_random_grid(grid: tp.List[tp.List[str]]):
     return False
 
 
-def delete_cells(grid:tp.List[tp.List[str]], cnt_del_el: int):
+def delete_cells(grid: tp.List[tp.List[str]], cnt_del_el: int):
     while cnt_del_el:
-        row = random.randint(0,8)
+        row = random.randint(0, 8)
         col = random.randint(0, 8)
         if grid[row][col] != ".":
             grid[row][col] = "."
-            cnt_del_el -=1
+            cnt_del_el -= 1
 
 
 def generate_sudoku(cnt_el: int) -> tp.List[tp.List[str]]:
@@ -286,9 +292,9 @@ def generate_sudoku(cnt_el: int) -> tp.List[tp.List[str]]:
     >>> check_solution(solution)
     True
     """
-    if cnt_el>81:
+    if cnt_el > 81:
         cnt_el = 81
-    cnt_del_el = 81-cnt_el
+    cnt_del_el = 81 - cnt_el
     grid = read_sudoku("empty_puzzle.txt")
     generate_random_grid(grid)
     delete_cells(grid, cnt_del_el)
