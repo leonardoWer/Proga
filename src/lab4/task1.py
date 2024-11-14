@@ -51,7 +51,7 @@ def films_history() -> list:
     return other_users_history
 
 
-class Recommendation:
+class SokolUser:
     other_users_history = []
     user_history = []
     films_list = get_films_list()
@@ -103,5 +103,5 @@ class Recommendation:
 
 
 if __name__ == "__main__":
-    person_recommendation = Recommendation(2, 4)
-    person_recommendation.get_user_recommendation()
+    user = SokolUser(2, 4)
+    user.get_user_recommendation()
