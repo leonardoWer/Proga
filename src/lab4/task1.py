@@ -29,7 +29,7 @@ def get_films_list() -> list:
     current_dir = os.path.dirname(os.path.abspath(__file__)) # Путь до текущей папки
     relative_path = "task1-input/films.txt" # Относительный путь
     absolute_path = os.path.join(current_dir, relative_path) # Абсолютный путь до папки с файлом
-    print(absolute_path)
+
     with open(absolute_path, "r", encoding="utf-8") as films:
         for film in films:
             films_list.append(list(map(str, film.strip().split(","))))
@@ -46,6 +46,7 @@ def films_history() -> list:
     current_dir = os.path.dirname(os.path.abspath(__file__))  # Путь до текущей папки
     relative_path = "task1-input/history.txt"  # Относительный путь
     absolute_path = os.path.join(current_dir, relative_path)  # Абсолютный путь до папки с файлом
+
     with open(absolute_path, "r", encoding='utf8') as users_history:
         for user_history in users_history:
             history.append(list(user_history.strip().split(",")))
@@ -104,8 +105,11 @@ class SokolUser:
                     accepted_films += ([film for film in other_user_history if film not in self.user_history])
 
         cnt_views_correct_films = self.cnt_views(accepted_films)
-        user_recommendation = max(cnt_views_correct_films)[-1]
-        return user_recommendation
+        try:
+            user_recommendation = max(cnt_views_correct_films)[-1]
+            return user_recommendation
+        except ValueError:
+            return "Для подбора рекомендации не хватает данных"
 
     def get_user_recommendation(self):
         print(f"Мы рекомендуем вам посмотреть фильм {self.select_film_recommendation()}!")
