@@ -56,9 +56,9 @@ class AgeGroups:
         for group in range(len(self.age_groups)):
             group_result = [f"Люди до {self.ages[group][-1]} лет: "]
             for person in self.age_groups[group]:
-                 group_result.append(self.lst_to_string_description(person))
+                 group_result.append(self.lst_to_string_description(person) + ", ")
             if group_result[1:]:
-                print("".join(group_result))
+                print("".join(group_result)[:-2])
 
 
 if __name__ == "__main__":
