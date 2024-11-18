@@ -6,6 +6,8 @@
 4. Функцию перевода истории пользователей в номерах фильмов в историю пользователя в названиях фильмов
 """
 
+import os
+
 
 def numbers_to_films(films_list: list, numbers_list: list) -> list:
     """
@@ -24,7 +26,11 @@ def numbers_to_films(films_list: list, numbers_list: list) -> list:
 def get_films_list() -> list:
     """Считывает все фильмы из файла films"""
     films_list = []
-    with open("task1-input/films.txt", "r", encoding="utf-8") as films:
+    current_dir = os.path.dirname(os.path.abspath(__file__)) # Путь до текущей папки
+    relative_path = "task1-input/films.txt" # Относительный путь
+    absolute_path = os.path.join(current_dir, relative_path) # Абсолютный путь до папки с файлом
+    print(absolute_path)
+    with open(absolute_path, "r", encoding="utf-8") as films:
         for film in films:
             films_list.append(list(map(str, film.strip().split(","))))
 
@@ -37,7 +43,10 @@ def films_history() -> list:
      - Возвращает список, в котором история пользователей(номера) соответствуют названию фильмов
     """
     history = []
-    with open("task1-input/history.txt", "r", encoding='utf8') as users_history:
+    current_dir = os.path.dirname(os.path.abspath(__file__))  # Путь до текущей папки
+    relative_path = "task1-input/history.txt"  # Относительный путь
+    absolute_path = os.path.join(current_dir, relative_path)  # Абсолютный путь до папки с файлом
+    with open(absolute_path, "r", encoding='utf8') as users_history:
         for user_history in users_history:
             history.append(list(user_history.strip().split(",")))
 
