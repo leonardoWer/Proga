@@ -46,6 +46,11 @@ class AgeGroups:
                     self.age_groups[age].append(person)
                     break
 
+    def sort_people_in_ages_groups(self):
+        """ Сортирует людей в возрастных группах в порядке убывания их возраста"""
+        for group in range(len(self.age_groups)):
+            self.age_groups[group] = sorted(self.age_groups[group], reverse=True)
+
     def lst_to_string_description(self, lst:list[str, str]):
         """ Переделывает список данных о человеке в строку"""
         return f"{lst[0]} ({lst[-1]})"
@@ -53,7 +58,8 @@ class AgeGroups:
     def get_people_ages_statistic(self):
         """ Выводит результаты о группах людей разной категории возрастов"""
         self.people_to_age_groups()
-        for group in range(len(self.age_groups)):
+        self.sort_people_in_ages_groups()
+        for group in range(len(self.age_groups)-1, -1, -1):
             group_result = [f"Люди до {self.ages[group][-1]} лет: "]
             for person in self.age_groups[group]:
                  group_result.append(self.lst_to_string_description(person) + ", ")
