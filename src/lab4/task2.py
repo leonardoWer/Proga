@@ -49,7 +49,7 @@ class AgeGroups:
     def sort_people_in_ages_groups(self):
         """ Сортирует людей в возрастных группах в порядке убывания их возраста"""
         for group in range(len(self.age_groups)):
-            self.age_groups[group] = sorted(self.age_groups[group], reverse=True)
+            self.age_groups[group] = sorted(self.age_groups[group], key=lambda x:x[-1], reverse=True)
 
     def lst_to_string_description(self, lst:list[str, str]):
         """ Переделывает список данных о человеке в строку"""
