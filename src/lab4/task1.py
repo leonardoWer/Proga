@@ -1,7 +1,15 @@
-"""Алгоритм рекомендации просмотра фильмов"""
+"""
+Содержит:
+1. Алгоритм рекомендации фильмов для пользователя на основе его истории просмотра фильмов
+2. Функцию считывания фильмов из файла
+3. Функцию считывания истории пользователей из файла
+4. Функцию перевода истории пользователей в номерах фильмов в историю пользователя в названиях фильмов
+"""
+
+import os
 
 
-def numbers_to_films(films_list:list, numbers_list:list) -> list:
+def numbers_to_films(films_list: list, numbers_list: list) -> list:
     """
     Сопоставляет названия фильмов и их номера
     >>> numbers_to_films([["1", "Хатико"], ["2", "Мстители"]], ["2", "2"])
@@ -18,7 +26,11 @@ def numbers_to_films(films_list:list, numbers_list:list) -> list:
 def get_films_list() -> list:
     """Считывает все фильмы из файла films"""
     films_list = []
-    with open("task1-input/films.txt", "r", encoding="utf-8") as films:
+    current_dir = os.path.dirname(os.path.abspath(__file__)) # Путь до текущей папки
+    relative_path = "task1-input/films.txt" # Относительный путь
+    absolute_path = os.path.join(current_dir, relative_path) # Абсолютный путь до папки с файлом
+
+    with open(absolute_path, "r", encoding="utf-8") as films:
         for film in films:
             films_list.append(list(map(str, film.strip().split(","))))
 
@@ -31,7 +43,11 @@ def films_history() -> list:
      - Возвращает список, в котором история пользователей(номера) соответствуют названию фильмов
     """
     history = []
-    with open("task1-input/history.txt", "r", encoding='utf8') as users_history:
+    current_dir = os.path.dirname(os.path.abspath(__file__))  # Путь до текущей папки
+    relative_path = "task1-input/history.txt"  # Относительный путь
+    absolute_path = os.path.join(current_dir, relative_path)  # Абсолютный путь до папки с файлом
+
+    with open(absolute_path, "r", encoding='utf8') as users_history:
         for user_history in users_history:
             history.append(list(user_history.strip().split(",")))
 
@@ -45,7 +61,7 @@ def films_history() -> list:
     return other_users_history
 
 
-class Recommendation:
+class SokolUser:
     other_users_history = []
     user_history = []
     films_list = get_films_list()
@@ -54,39 +70,51 @@ class Recommendation:
         self.other_users_history = films_history()
         self.user_history = numbers_to_films(self.films_list, list(str(user_history)))
 
-    def get_user_history(self):
-        print(self.user_history)
+    def get_history(self):
+        """ Выводит историю пользователя и историю всех пользователей"""
+        print(f"История текущего пользователя: {self.user_history}")
+        print(f"История всех пользователей: {self.other_users_history}")
 
     def cnt_views(self, correct_films_list: list):
-        cnt_views_accepted_films = []
-        cnt_views = 0
+        """
+        Подсчитывает количество просмотров фильмов среди всех пользователей
+         - Принимает: список с фильмами
+         - Возвращает: список с просмотрами этих фильмов
+        """
+        cnt_views_accepted_films = [] # Список сот списками в которых: [количество просмотров, фильм]
         for film in correct_films_list:
+            cnt_views = 0
             for other_user_films in self.other_users_history:
                 for other_film in other_user_films:
                     if film == other_film:
                         cnt_views += 1
-            cnt_views_accepted_films.append(cnt_views)
+            cnt_views_accepted_films.append([cnt_views, film])
 
         return cnt_views_accepted_films
 
-    def film_recommendation(self):
-        accepted_films = []
+    def select_film_recommendation(self):
+        """ Подбирает рекомендацию для пользователя """
+        accepted_films = [] # Список рекомендаций для пользователя
         for film in self.user_history:
             for other_user_history in self.other_users_history:
                 cnt_correct_films = 0
-                for film_name in set(other_user_history):
+                for film_name in other_user_history:
                     if film_name == film:
                         cnt_correct_films += 1
-
                 if cnt_correct_films >= len(self.user_history):
-                    accepted_films.append(set(other_user_history + self.user_history) )
+                    accepted_films += ([film for film in other_user_history if film not in self.user_history])
 
         cnt_views_correct_films = self.cnt_views(accepted_films)
-        return max(cnt_views_correct_films)
+        try:
+            user_recommendation = max(cnt_views_correct_films)[-1]
+            return user_recommendation
+        except ValueError:
+            return "Для подбора рекомендации не хватает данных"
+
+    def get_user_recommendation(self):
+        print(f"Мы рекомендуем вам посмотреть фильм {self.select_film_recommendation()}!")
 
 
-if __name__=="__main__":
-    person_recommendation = Recommendation(2, 4)
-    person_recommendation.get_user_history()
-    person_recommendation.film_recommendation()
-
+if __name__ == "__main__":
+    user = SokolUser(2, 4)
+    user.get_user_recommendation()
