@@ -9,66 +9,71 @@
 import os
 
 
-def numbers_to_films(films_list: list, numbers_list: list) -> list:
-    """
-    Сопоставляет названия фильмов и их номера
-    >>> numbers_to_films([["1", "Хатико"], ["2", "Мстители"]], ["2", "2"])
-    ['Мстители', 'Мстители']
-    """
-    numbers_to_films_list = []
-    for number in numbers_list:
-        for film in films_list:
-            if film[0] == number:
-                numbers_to_films_list.append(film[1])
-    return numbers_to_films_list
+class InputInfo:
+    """Класс, который обрабатывает информацию из файлов"""
 
+    def numbers_to_films(self, films_list: list, numbers_list: list) -> list:
+        """
+        Сопоставляет названия фильмов и их номера
+        >>> self.numbers_to_films([["1", "Хатико"], ["2", "Мстители"]], ["2", "2"])
+        ['Мстители', 'Мстители']
+        """
+        numbers_to_films_list = []
+        for number in numbers_list:
+            for film in films_list:
+                if film[0] == number:
+                    numbers_to_films_list.append(film[1])
+        return numbers_to_films_list
 
-def get_films_list() -> list:
-    """Считывает все фильмы из файла films"""
-    films_list = []
-    current_dir = os.path.dirname(os.path.abspath(__file__)) # Путь до текущей папки
-    relative_path = "task1-input/films.txt" # Относительный путь
-    absolute_path = os.path.join(current_dir, relative_path) # Абсолютный путь до папки с файлом
+    def get_films_list(self) -> list:
+        """Считывает все фильмы из файла films"""
+        films_list = []
+        current_dir = os.path.dirname(os.path.abspath(__file__)) # Путь до текущей папки
+        relative_path = "task1-input/films.txt" # Относительный путь
+        absolute_path = os.path.join(current_dir, relative_path) # Абсолютный путь до папки с файлом
 
-    with open(absolute_path, "r", encoding="utf-8") as films:
-        for film in films:
-            films_list.append(list(map(str, film.strip().split(","))))
+        with open(absolute_path, "r", encoding="utf-8") as films:
+            for film in films:
+                films_list.append(list(map(str, film.strip().split(","))))
 
-    return films_list
+        return films_list
 
+    def films_history(self) -> list:
+        """
+        Обрабатывает историю пользователей:
+         - Возвращает список, в котором история пользователей(номера) сопоставлены с фильмами
+         - Пример: (2,2) -> ([Хатико, 2], [Хатико, 2])
+        """
+        history = []
+        current_dir = os.path.dirname(os.path.abspath(__file__))  # Путь до текущей папки
+        relative_path = "task1-input/history.txt"  # Относительный путь
+        absolute_path = os.path.join(current_dir, relative_path)  # Абсолютный путь до папки с файлом
 
-def films_history() -> list:
-    """
-    Обрабатывает историю пользователей:
-     - Возвращает список, в котором история пользователей(номера) соответствуют названию фильмов
-    """
-    history = []
-    current_dir = os.path.dirname(os.path.abspath(__file__))  # Путь до текущей папки
-    relative_path = "task1-input/history.txt"  # Относительный путь
-    absolute_path = os.path.join(current_dir, relative_path)  # Абсолютный путь до папки с файлом
+        with open(absolute_path, "r", encoding='utf8') as users_history:
+            for user_history in users_history:
+                history.append(list(user_history.strip().split(",")))
 
-    with open(absolute_path, "r", encoding='utf8') as users_history:
-        for user_history in users_history:
-            history.append(list(user_history.strip().split(",")))
+        films_list = self.get_films_list()
 
-    films_list = get_films_list()
+        other_users_history = []
+        for user_history in history:
+            user_numbers_to_films = self.numbers_to_films(films_list, user_history) # Переводим номера в названия
+            other_users_history.append(user_numbers_to_films)
 
-    other_users_history = []
-    for user_history in history:
-        user_numbers_to_films = numbers_to_films(films_list, user_history)
-        other_users_history.append(user_numbers_to_films)
-
-    return other_users_history
+        return other_users_history
 
 
 class SokolUser:
-    other_users_history = []
+    """Класс характеризующий пользователя кинотеатра Сокол"""
     user_history = []
-    films_list = get_films_list()
+    other_users_history = []
+    films_list = []
 
     def __init__(self, *user_history):
-        self.other_users_history = films_history()
-        self.user_history = numbers_to_films(self.films_list, list(str(user_history)))
+        utils = InputInfo()
+        self.other_users_history = utils.films_history()
+        self.films_list = utils.get_films_list()
+        self.user_history = utils.numbers_to_films(self.films_list, list(str(user_history)))
 
     def get_history(self):
         """ Выводит историю пользователя и историю всех пользователей"""
