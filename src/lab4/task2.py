@@ -2,16 +2,9 @@
 В файле реализуется пайтон приложение, которое сортирует список людей и их возрастов по возрастным категориям
 """
 
-
-class AgeGroups:
-    ages = ["18", "25", "35", "45", "60", "80", "100"]
+class InputInfo:
+    """Класс, который принимает информацию о пользователях"""
     people_info = []
-
-    def __init__(self):
-        self.input_data()
-        self.ages = ["-1"] + self.ages + ["123"]
-        self.ages = self.age_to_age_list()
-        self.age_groups = [[] for i in range(len(self.ages))]
 
     def input_data(self):
         """Принимает данные о людях из консоли"""
@@ -23,6 +16,27 @@ class AgeGroups:
                 self.people_info.append((person_info.split(",")))
             else:
                 break
+
+    def input_people_info(self):
+        """Вызывает функцию, которая принимает данные из консоли"""
+        self.input_data()
+
+    def get_people_info(self):
+        """Возвращает данные о людях"""
+        return self.people_info
+
+
+class AgeGroups:
+    """Класс, который сортирует людей по возрастным группам"""
+    ages = ["18", "25", "35", "45", "60", "80", "100"]
+    age_groups: list
+    people_info: list
+
+    def __init__(self, people_info:list):
+        self.ages = ["-1"] + self.ages + ["123"]
+        self.ages = self.age_to_age_list()
+        self.age_groups = [[] for i in range(len(self.ages))]
+        self.people_info = people_info
 
     def age_to_age_list(self):
         """Генерирует из числа промежуток всех натуральных чисел(с 0) от и до этого числа"""
@@ -67,6 +81,8 @@ class AgeGroups:
 
 
 if __name__ == "__main__":
-    data = AgeGroups()
-    # data.get_info()
-    data.get_people_ages_statistic()
+    utils = InputInfo()
+    utils.input_people_info()
+    people_info = utils.get_people_info()
+    sort_to_age_groups = AgeGroups(people_info)
+    sort_to_age_groups.get_people_ages_statistic()
