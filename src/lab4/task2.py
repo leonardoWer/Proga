@@ -77,7 +77,10 @@ class AgeGroups:
             for person in self.age_groups[group]:
                  group_result.append(self.lst_to_string_description(person) + ", ")
             if group_result[1:]:
-                print("".join(group_result)[:-2])
+                if __name__ == "__main__":
+                    print("".join(group_result)[:-2])
+                else:
+                    return "".join(group_result)[:-2]
 
 
 if __name__ == "__main__":
