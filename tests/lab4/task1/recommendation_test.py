@@ -1,5 +1,5 @@
 import unittest
-from src.lab4.task1 import numbers_to_films, SokolUser
+from src.lab4.task1 import InputInfo, SokolUser
 
 
 class FilmRecommendationTestCase(unittest.TestCase):
@@ -12,11 +12,12 @@ class FilmRecommendationTestCase(unittest.TestCase):
         numbers_list1 = ["1", "1"]
         films_list2 = [["1", "Хатико"], ["2", "Мстители"]]
         numbers_list2 = ["1", "2"]
+        utils = InputInfo()
 
         # when
-        result = numbers_to_films(films_list, numbers_list)
-        result1 = numbers_to_films(films_list1, numbers_list1)
-        result2 = numbers_to_films(films_list2, numbers_list2)
+        result = utils.numbers_to_films(films_list, numbers_list)
+        result1 = utils.numbers_to_films(films_list1, numbers_list1)
+        result2 = utils.numbers_to_films(films_list2, numbers_list2)
 
         # then
         self.assertEqual(result, ['Мстители', 'Мстители'])
