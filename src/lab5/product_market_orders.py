@@ -17,6 +17,9 @@ class Order:
         self.phone_number = phone_number
         self.delivery_priority = delivery_priority
 
+    def __str__(self):
+        return f"{self.order_id};{self.formatted_products()};{self.customer_name};{self.delivery_address};{self.phone_number};{self.delivery_priority}\n"
+
     def validate(self) -> list:
         """
         Проверяет корректность заполнения адреса доставки и номера телефона по шаблону
